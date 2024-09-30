@@ -8,7 +8,7 @@ import (
 )
 
 type Admin struct {
-	ID        uint   `gorm:"primaryKey" json:"id"`
+	ID        int   `gorm:"primaryKey" json:"id"`
 	UUID      string `gorm:"type:uuid;default:uuid_generate_v4()" json:"uuid"`
 	Name      string `gorm:"type:varchar(100);not null" validate:"required" json:"name"`
 	Email     string `gorm:"type:varchar(100);unique;not null" validate:"required,email" json:"email"`

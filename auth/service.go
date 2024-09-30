@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	GenerateToken(adminID uint) (string, error)
+	GenerateToken(adminID int) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 }
 
@@ -20,7 +20,7 @@ func NewService() *jwtService {
 
 var SECRET_KEY = []byte("b4s1c_tr4d3")
 
-func (s *jwtService) GenerateToken(adminID uint) (string, error) {
+func (s *jwtService) GenerateToken(adminID int) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["admin_id"] = adminID
 	claims["exp"] = time.Now().Add(time.Hour * 2).Unix()
