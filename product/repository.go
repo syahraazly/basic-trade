@@ -6,9 +6,9 @@ type Repository interface {
 	Save(product *Product) (*Product, error)
 	Update(product *Product) (*Product, error)
 	Delete(uuid string) (*Product, error)
-	GetAll() ([]Product, error)
+	GetAll(page, limit int, search string) ([]Product, error)
 	GetByUUID(uuid string) (*Product, error)
-	GetByAdminID(adminID int) ([]Product, error)
+	GetByAdminID(adminID int, page, limit int, search string) ([]Product, error)
 }
 
 type repository struct {
@@ -44,9 +44,17 @@ func (r *repository) Delete(uuid string) (*Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetAll() ([]Product, error) {
+func (r *repository) GetAll(page, limit int, search string) ([]Product, error) {
 	var products []Product
-	err := r.db.Find(&products).Error
+
+	offset := (page - 1) * limit
+
+	query := r.db.Limit(limit).Offset(offset)
+	if search != "" {
+		query = query.Where("name LIKE ?", "%"+search+"%")
+	}
+
+	err := query.Find(&products).Error
 	if err != nil {
 		return nil, err
 	}
@@ -62,9 +70,17 @@ func (r *repository) GetByUUID(uuid string) (*Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetByAdminID(adminID int) ([]Product, error) {
+func (r *repository) GetByAdminID(adminID int, page, limit int, search string) ([]Product, error) {
 	var products []Product
-	err := r.db.Where("admin_id = ?", adminID).Find(&products).Error
+
+	offset := (page - 1) * limit
+
+	query := r.db.Where("admin_id = ?", adminID).Limit(limit).Offset(offset)
+	if search != "" {
+		query.Where("name LIKE ?", "%"+search+"%")
+	}
+
+	err := query.Find(&products).Error
 	if err != nil {
 		return nil, err
 	}

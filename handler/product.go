@@ -25,8 +25,11 @@ const maxFileSize = 5 * 1024 * 1024
 
 func (h *productHandler) GetProducts(c *gin.Context) {
 	adminID, _ := strconv.Atoi(c.Query("admin_id"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	search := c.Query("search")
 
-	products, err := h.service.GetProducts(adminID)
+	products, err := h.service.GetProducts(adminID, page, limit, search)
 	if err != nil {
 		response := helper.APIResponse("Error to get products", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
