@@ -6,6 +6,7 @@ import (
 	"basic_trade/handler"
 	"basic_trade/helper"
 	"basic_trade/product"
+	"basic_trade/variant"
 	"log"
 	"net/http"
 	"strings"
@@ -33,13 +34,16 @@ func main() {
 
 	adminRepository := admin.NewRepository(db)
 	productRepository := product.NewRepository(db)
+	variantRepository := variant.NewRepository(db)
 
 	adminService := admin.NewService(adminRepository)
 	authService := auth.NewService()
 	productService := product.NewService(productRepository)
+	variantService := variant.NewService(variantRepository, productRepository)
 
 	adminHandler := handler.NewAdminHandler(adminService, authService)
 	productHandler := handler.NewProductHandler(productService)
+	variantHandler := handler.NewVariantHandler(variantService)
 
 	router := gin.Default()
 	api := router.Group("/api")
@@ -52,6 +56,12 @@ func main() {
 	api.POST("/products", authMiddleware(authService, adminService), productHandler.CreateProduct)
 	api.PUT("/products/:uuid", authMiddleware(authService, adminService), productHandler.UpdateProduct)
 	api.DELETE("/products/:uuid", authMiddleware(authService, adminService), productHandler.DeleteProduct)
+
+	api.GET("/products/variants", variantHandler.GetVariants)
+	api.GET("/products/variants/:uuid", variantHandler.GetDetailVariant)
+	api.POST("/products/variants", authMiddleware(authService, adminService), variantHandler.CreateVariant)
+	api.PUT("/products/variants/:uuid", authMiddleware(authService, adminService), variantHandler.UpdateVariant)
+	api.DELETE("/products/variants/:uuid", authMiddleware(authService, adminService), variantHandler.DeleteVariant)
 
 	router.Run()
 }
