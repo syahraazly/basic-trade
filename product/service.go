@@ -1,15 +1,16 @@
 package product
 
 import (
+	"basic_trade/common"
 	"errors"
 )
 
 type Service interface {
-	GetProducts(adminID int, page, limit int, search string) ([]Product, error)
-	GetProductByUUID(input GetProductByUUIDInput) (*Product, error)
-	CreateProduct(input ProductInput) (*Product, error)
-	UpdateProduct(inputID GetProductByUUIDInput, input ProductInput) (*Product, error)
-	DeleteProduct(uuid string, adminID int) (*Product, error)
+	GetProducts(adminID int, page, limit int, search string) ([]common.Product, error)
+	GetProductByUUID(input GetProductByUUIDInput) (*common.Product, error)
+	CreateProduct(input ProductInput) (*common.Product, error)
+	UpdateProduct(inputID GetProductByUUIDInput, input ProductInput) (*common.Product, error)
+	DeleteProduct(uuid string, adminID int) (*common.Product, error)
 }
 
 type service struct {
@@ -20,7 +21,7 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) GetProducts(adminID int, page, limit int, search string) ([]Product, error) {
+func (s *service) GetProducts(adminID int, page, limit int, search string) ([]common.Product, error) {
 	if adminID != 0 {
 		products, err := s.repository.GetByAdminID(adminID, page, limit, search)
 		if err != nil {
@@ -38,7 +39,7 @@ func (s *service) GetProducts(adminID int, page, limit int, search string) ([]Pr
 	return products, nil
 }
 
-func (s *service) GetProductByUUID(input GetProductByUUIDInput) (*Product, error) {
+func (s *service) GetProductByUUID(input GetProductByUUIDInput) (*common.Product, error) {
 	product, err := s.repository.GetByUUID(input.UUID)
 	if err != nil {
 		return product, err
@@ -47,8 +48,8 @@ func (s *service) GetProductByUUID(input GetProductByUUIDInput) (*Product, error
 	return product, nil
 }
 
-func (s *service) CreateProduct(input ProductInput) (*Product, error) {
-	product := &Product{
+func (s *service) CreateProduct(input ProductInput) (*common.Product, error) {
+	product := &common.Product{
 		Name:     input.Name,
 		ImageURL: input.ImageURL,
 		AdminID:  input.Admin.ID,
@@ -62,7 +63,7 @@ func (s *service) CreateProduct(input ProductInput) (*Product, error) {
 	return product, nil
 }
 
-func (s *service) UpdateProduct(inputID GetProductByUUIDInput, input ProductInput) (*Product, error) {
+func (s *service) UpdateProduct(inputID GetProductByUUIDInput, input ProductInput) (*common.Product, error) {
 	product, err := s.repository.GetByUUID(inputID.UUID)
 	if err != nil {
 		return product, err
@@ -86,7 +87,7 @@ func (s *service) UpdateProduct(inputID GetProductByUUIDInput, input ProductInpu
 	return updatedProduct, nil
 }
 
-func (s *service) DeleteProduct(uuid string, adminID int) (*Product, error) {
+func (s *service) DeleteProduct(uuid string, adminID int) (*common.Product, error) {
 	product, err := s.repository.GetByUUID(uuid)
 	if err != nil {
 		return product, err

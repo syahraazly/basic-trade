@@ -1,14 +1,18 @@
 package product
 
-import "gorm.io/gorm"
+import (
+	"basic_trade/common"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
-	Save(product *Product) (*Product, error)
-	Update(product *Product) (*Product, error)
-	Delete(uuid string) (*Product, error)
-	GetAll(page, limit int, search string) ([]Product, error)
-	GetByUUID(uuid string) (*Product, error)
-	GetByAdminID(adminID int, page, limit int, search string) ([]Product, error)
+	Save(product *common.Product) (*common.Product, error)
+	Update(product *common.Product) (*common.Product, error)
+	Delete(uuid string) (*common.Product, error)
+	GetAll(page, limit int, search string) ([]common.Product, error)
+	GetByUUID(uuid string) (*common.Product, error)
+	GetByAdminID(adminID int, page, limit int, search string) ([]common.Product, error)
 }
 
 type repository struct {
@@ -19,7 +23,7 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) Save(product *Product) (*Product, error) {
+func (r *repository) Save(product *common.Product) (*common.Product, error) {
 	err := r.db.Create(&product).Error
 	if err != nil {
 		return nil, err
@@ -27,7 +31,7 @@ func (r *repository) Save(product *Product) (*Product, error) {
 	return product, nil
 }
 
-func (r *repository) Update(product *Product) (*Product, error) {
+func (r *repository) Update(product *common.Product) (*common.Product, error) {
 	err := r.db.Save(&product).Error
 	if err != nil {
 		return nil, err
@@ -35,8 +39,8 @@ func (r *repository) Update(product *Product) (*Product, error) {
 	return product, nil
 }
 
-func (r *repository) Delete(uuid string) (*Product, error) {
-	var product Product
+func (r *repository) Delete(uuid string) (*common.Product, error) {
+	var product common.Product
 	err := r.db.Where("uuid = ?", uuid).Delete(&product).Error
 	if err != nil {
 		return nil, err
@@ -44,8 +48,8 @@ func (r *repository) Delete(uuid string) (*Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetAll(page, limit int, search string) ([]Product, error) {
-	var products []Product
+func (r *repository) GetAll(page, limit int, search string) ([]common.Product, error) {
+	var products []common.Product
 
 	offset := (page - 1) * limit
 
@@ -61,8 +65,8 @@ func (r *repository) GetAll(page, limit int, search string) ([]Product, error) {
 	return products, nil
 }
 
-func (r *repository) GetByUUID(uuid string) (*Product, error) {
-	var product Product
+func (r *repository) GetByUUID(uuid string) (*common.Product, error) {
+	var product common.Product
 	err := r.db.Where("uuid = ?", uuid).First(&product).Error
 	if err != nil {
 		return nil, err
@@ -70,8 +74,8 @@ func (r *repository) GetByUUID(uuid string) (*Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetByAdminID(adminID int, page, limit int, search string) ([]Product, error) {
-	var products []Product
+func (r *repository) GetByAdminID(adminID int, page, limit int, search string) ([]common.Product, error) {
+	var products []common.Product
 
 	offset := (page - 1) * limit
 
