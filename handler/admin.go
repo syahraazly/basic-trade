@@ -21,26 +21,26 @@ func NewAdminHandler(adminService admin.Service, authService auth.Service) *admi
 func (h *adminHandler) Register(c *gin.Context) {
 	var input admin.RegisterInput
 
-	err := c.ShouldBindJSON(&input)
+	input.Name = c.PostForm("name")
+	input.Email = c.PostForm("email")
+	input.Password = c.PostForm("password")
+
+	newAdmin, err := h.adminService.Register(input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 
-		response := helper.APIResponse("Register Account Failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	newAdmin, err := h.adminService.Register(input)
-	if err != nil {
-		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", errorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	token, err := h.authService.GenerateToken(newAdmin.ID)
 	if err != nil {
-		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", errorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -58,7 +58,10 @@ func (h *adminHandler) Register(c *gin.Context) {
 func (h *adminHandler) Login(c *gin.Context) {
 	var input admin.LoginInput
 
-	err := c.ShouldBindJSON(&input)
+	input.Email = c.PostForm("email")
+	input.Password = c.PostForm("password")
+
+	loginAdmin, err := h.adminService.Login(input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -68,18 +71,12 @@ func (h *adminHandler) Login(c *gin.Context) {
 		return
 	}
 
-	loginAdmin, err := h.adminService.Login(input)
-	if err != nil {
-		errorMessage := gin.H{"errors": err.Error()}
-
-		response := helper.APIResponse("Login Failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
 	token, err := h.authService.GenerateToken(loginAdmin.ID)
 	if err != nil {
-		response := helper.APIResponse("Login Failed", http.StatusBadRequest, "error", nil)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Login Failed", http.StatusBadRequest, "error", errorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
