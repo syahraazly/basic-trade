@@ -26,11 +26,11 @@ const maxFileSize = 5 * 1024 * 1024
 
 func (h *productHandler) GetProducts(c *gin.Context) {
 	adminID, _ := strconv.Atoi(c.Query("admin_id"))
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	limit, _ := strconv.Atoi(c.Query("limit")) 
+	offset, _ := strconv.Atoi(c.Query("offset"))
 	search := c.Query("search")
 
-	products, err := h.service.GetProducts(adminID, page, limit, search)
+	products, err := h.service.GetProducts(adminID, offset, limit, search)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}

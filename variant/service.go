@@ -10,7 +10,7 @@ type Service interface {
 	CreateVariant(input VariantInput) (*common.Variant, error)
 	UpdateVariant(inputID GetVariantByUUIDInput, input VariantInput) (*common.Variant, error)
 	DeleteVariant(uuid string, adminID int) (*common.Variant, error)
-	GetVariants(page, limit int, search string) ([]common.Variant, error)
+	GetVariants(offset, limit int, search string) ([]common.Variant, error)
 	GetVariantByUUID(input GetVariantByUUIDInput) (*common.Variant, error)
 }
 
@@ -23,8 +23,8 @@ func NewService(repository Repository, productRepository product.Repository) *se
 	return &service{repository, productRepository}
 }
 
-func (s *service) GetVariants(page, limit int, search string) ([]common.Variant, error) {
-	variants, err := s.repository.GetAll(page, limit, search)
+func (s *service) GetVariants(offset, limit int, search string) ([]common.Variant, error) {
+	variants, err := s.repository.GetAll(offset, limit, search)
 	if err != nil {
 		return variants, err
 	}

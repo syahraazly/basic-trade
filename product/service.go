@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	GetProducts(adminID int, page, limit int, search string) ([]common.Product, error)
+	GetProducts(adminID int, offset, limit int, search string) ([]common.Product, error)
 	GetProductByUUID(input GetProductByUUIDInput) (*common.Product, error)
 	CreateProduct(input ProductInput) (*common.Product, error)
 	UpdateProduct(inputID GetProductByUUIDInput, input ProductInput) (*common.Product, error)
@@ -21,9 +21,9 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) GetProducts(adminID int, page, limit int, search string) ([]common.Product, error) {
+func (s *service) GetProducts(adminID int, offset, limit int, search string) ([]common.Product, error) {
 	if adminID != 0 {
-		products, err := s.repository.GetByAdminID(adminID, page, limit, search)
+		products, err := s.repository.GetByAdminID(adminID, offset, limit, search)
 		if err != nil {
 			return products, err
 		}
@@ -31,7 +31,7 @@ func (s *service) GetProducts(adminID int, page, limit int, search string) ([]co
 		return products, nil
 	}
 
-	products, err := s.repository.GetAll(page, limit, search)
+	products, err := s.repository.GetAll(offset, limit, search)
 	if err != nil {
 		return products, err
 	}

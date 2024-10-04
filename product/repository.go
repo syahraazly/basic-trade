@@ -10,9 +10,9 @@ type Repository interface {
 	Save(product *common.Product) (*common.Product, error)
 	Update(product *common.Product) (*common.Product, error)
 	Delete(uuid string) (*common.Product, error)
-	GetAll(page, limit int, search string) ([]common.Product, error)
+	GetAll(offset, limit int, search string) ([]common.Product, error)
 	GetByUUID(uuid string) (*common.Product, error)
-	GetByAdminID(adminID int, page, limit int, search string) ([]common.Product, error)
+	GetByAdminID(adminID int, offset, limit int, search string) ([]common.Product, error)
 }
 
 type repository struct {
@@ -48,10 +48,8 @@ func (r *repository) Delete(uuid string) (*common.Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetAll(page, limit int, search string) ([]common.Product, error) {
+func (r *repository) GetAll(offset, limit int, search string) ([]common.Product, error) {
 	var products []common.Product
-
-	offset := (page - 1) * limit
 
 	query := r.db.Preload("Variants").Limit(limit).Offset(offset)
 	if search != "" {
@@ -74,10 +72,8 @@ func (r *repository) GetByUUID(uuid string) (*common.Product, error) {
 	return &product, nil
 }
 
-func (r *repository) GetByAdminID(adminID int, page, limit int, search string) ([]common.Product, error) {
+func (r *repository) GetByAdminID(adminID int, offset, limit int, search string) ([]common.Product, error) {
 	var products []common.Product
-
-	offset := (page - 1) * limit
 
 	query := r.db.Where("admin_id = ?", adminID).Limit(limit).Offset(offset)
 	if search != "" {

@@ -10,7 +10,7 @@ type Repository interface {
 	Save(variant *common.Variant) (*common.Variant, error)
 	Update(variant *common.Variant) (*common.Variant, error)
 	Delete(uuid string) (*common.Variant, error)
-	GetAll(page, limit int, search string) ([]common.Variant, error)
+	GetAll(offset, limit int, search string) ([]common.Variant, error)
 	GetByUUID(uuid string) (*common.Variant, error)
 	GetProductByID(productID int) (*common.Product, error)
 }
@@ -48,10 +48,8 @@ func (r *repository) Delete(uuid string) (*common.Variant, error) {
 	return &variant, nil
 }
 
-func (r *repository) GetAll(page, limit int, search string) ([]common.Variant, error) {
+func (r *repository) GetAll(offset, limit int, search string) ([]common.Variant, error) {
 	var variants []common.Variant
-
-	offset := (page - 1) * limit
 
 	query := r.db.Limit(limit).Offset(offset)
 	if search != "" {
