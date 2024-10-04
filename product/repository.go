@@ -53,7 +53,7 @@ func (r *repository) GetAll(page, limit int, search string) ([]common.Product, e
 
 	offset := (page - 1) * limit
 
-	query := r.db.Limit(limit).Offset(offset)
+	query := r.db.Preload("Variants").Limit(limit).Offset(offset)
 	if search != "" {
 		query = query.Where("name LIKE ?", "%"+search+"%")
 	}

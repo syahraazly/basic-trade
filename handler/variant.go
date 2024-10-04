@@ -67,7 +67,7 @@ func (h *variantHandler) GetDetailVariant(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Detail of variant", http.StatusOK, "success", variantDetail)
+	response := helper.APIResponse("Detail of variant", http.StatusOK, "success", common.FormatVariantDetail(*variantDetail))
 	c.JSON(http.StatusOK, response)
 }
 

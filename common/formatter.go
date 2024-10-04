@@ -61,3 +61,8 @@ func FormatVariants(variants []Variant) []VariantFormatter {
 	}
 	return formatters
 }
+
+func FormatVariantDetail(variant Variant) VariantFormatter {
+	formatter := FormatVariant(variant)
+	return formatter
+}
