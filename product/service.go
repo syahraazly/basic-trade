@@ -70,7 +70,7 @@ func (s *service) UpdateProduct(inputID GetProductByUUIDInput, input ProductInpu
 	}
 
 	if product.AdminID != input.Admin.ID {
-		return product, errors.New("You don't have permission to update this product")
+		return product, errors.New("unauthorized")
 	}
 
 	product.Name = input.Name
@@ -94,7 +94,7 @@ func (s *service) DeleteProduct(uuid string, adminID int) (*common.Product, erro
 	}
 
 	if product.AdminID != adminID {
-		return product, errors.New("You don't have permission to delete this product")
+		return product, errors.New("unauthorized")
 	}
 
 	deletedProduct, err := s.repository.Delete(uuid)

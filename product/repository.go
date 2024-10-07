@@ -41,10 +41,21 @@ func (r *repository) Update(product *common.Product) (*common.Product, error) {
 
 func (r *repository) Delete(uuid string) (*common.Product, error) {
 	var product common.Product
-	err := r.db.Where("uuid = ?", uuid).Delete(&product).Error
+	err := r.db.Where("uuid = ?", uuid).First(&product).Error
 	if err != nil {
 		return nil, err
 	}
+
+	err = r.db.Where("product_id = ?", product.ID).Delete(&common.Variant{}).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Delete(&product).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return &product, nil
 }
 

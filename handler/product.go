@@ -227,10 +227,21 @@ func (h *productHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	currentAdmin := c.MustGet("currentAdmin").(admin.Admin)
+	currentAdmin, exists := c.MustGet("currentAdmin").(admin.Admin)
+	if !exists {
+		response := helper.APIResponse("You don't have permission", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
 
 	deletedProduct, err := h.service.DeleteProduct(inputID.UUID, currentAdmin.ID)
 	if err != nil {
+		if err.Error() == "unauthorized" {
+			response := helper.APIResponse("You don't have permission", http.StatusUnauthorized, "error", nil)
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 
