@@ -9,6 +9,7 @@ import (
 	"basic_trade/variant"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,17 @@ func init() {
 }
 
 func main() {
-	dsn := "root:password@tcp(localhost:3306)/basic_trade?parseTime=true"
+	// Use environment variables to get DB connection details
+	dbUser := os.Getenv("MYSQL_USER")
+	dbPass := os.Getenv("MYSQL_PASSWORD")
+	dbHost := os.Getenv("MYSQL_HOST")
+	dbPort := os.Getenv("MYSQL_PORT")
+	dbName := os.Getenv("MYSQL_DATABASE")
+
+	// Construct the DSN (Data Source Name)
+	dsn := dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?parseTime=true"
+
+	// Open the database connection
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
