@@ -20,8 +20,8 @@ func NewVariantHandler(service variant.Service) *variantHandler {
 }
 
 func (h *variantHandler) GetVariants(c *gin.Context) {
-	limit, _ := strconv.Atoi(c.Query("limit"))    
-  offset, _ := strconv.Atoi(c.Query("offset"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 	search := c.Query("search")
 
 	variants, err := h.service.GetVariants(offset, limit, search)

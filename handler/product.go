@@ -26,8 +26,8 @@ const maxFileSize = 5 * 1024 * 1024
 
 func (h *productHandler) GetProducts(c *gin.Context) {
 	adminID, _ := strconv.Atoi(c.Query("admin_id"))
-	limit, _ := strconv.Atoi(c.Query("limit")) 
-	offset, _ := strconv.Atoi(c.Query("offset"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 	search := c.Query("search")
 
 	products, err := h.service.GetProducts(adminID, offset, limit, search)

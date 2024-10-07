@@ -53,7 +53,7 @@ func (r *repository) GetAll(offset, limit int, search string) ([]common.Variant,
 
 	query := r.db.Limit(limit).Offset(offset)
 	if search != "" {
-		query = query.Where("name LIKE ?", "%"+search+"%")
+		query = query.Where("variant_name LIKE ?", "%"+search+"%")
 	}
 
 	err := query.Find(&variants).Error
