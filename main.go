@@ -26,7 +26,7 @@ func init() {
 }
 
 func main() {
-	dsn := "root:password@tcp(localhost:3306)/basic_trade?parseTime=true"
+	dsn := "root:RsLqamxqEQjiRlTttxNOrKCKWthZaNQM@tcp(junction.proxy.rlwy.net:28442)/railway?parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
